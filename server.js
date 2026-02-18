@@ -91,10 +91,17 @@ app.use(errorHandler);
 // Start server
 const PORT = process.env.PORT || 5000;
 
+const seed = require('./seed');
+
+// ...
+
 sequelize
     .sync({ force: false })
-    .then(() => {
+    .then(async () => {
         console.log('✅ Database synced successfully.');
+
+        // Auto-seed test accounts
+        await seed();
 
         // Start auto-cancel background job
         startAutoCancelJob();
