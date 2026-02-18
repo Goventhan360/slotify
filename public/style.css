@@ -183,68 +183,7 @@ a {
     position: relative;
     padding: 64px;
     position: relative;
-    overflow-y: auto;
-    /* Allow scrolling for doctors list */
-}
-
-/* Public Directory inside Auth Screen */
-.public-directory {
-    margin-top: 48px;
-    padding-top: 32px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.public-directory h3 {
-    font-size: 18px;
-    color: var(--text);
-    margin-bottom: 24px;
-    font-weight: 600;
-}
-
-.public-doctors-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-}
-
-.public-doc-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: var(--transition);
-}
-
-.public-doc-card:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
-}
-
-.doc-avatar-sm {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--primary), var(--purple));
-    color: white;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-}
-
-.doc-info h4 {
-    font-size: 14px;
-    color: var(--text);
-    margin-bottom: 2px;
-}
-
-.doc-info p {
-    font-size: 12px;
-    color: var(--text-secondary);
+    overflow: hidden;
 }
 
 .auth-left::before {
