@@ -52,21 +52,7 @@ const startAutoCancelJob = () => {
                     reason: `Auto-cancelled: not confirmed within ${cancelHours} hours`,
                 });
 
-                // Free the slot
-                const slot = appointment.slot;
-                slot.isAvailable = true;
-                await slot.save();
-
-                // Notify user
-                const user = await User.findByPk(appointment.userId);
-                notifyAutoCancel(
-                    user.email,
-                    slot.provider.user.name,
-                    slot.date,
-                    slot.startTime
-                );
-
-                // Promote from waitlist
+                // Check waitlist FIRST to prevent race condition (sniping)
                 const nextInLine = await Waitlist.findOne({
                     where: { slotId: slot.id, status: 'waiting' },
                     order: [['position', 'ASC']],
@@ -74,6 +60,7 @@ const startAutoCancelJob = () => {
                 });
 
                 if (nextInLine) {
+                    // 1. Promote directly (Slot remains unavailable, just changes owner implicitly)
                     const newAppointment = await Appointment.create({
                         userId: nextInLine.userId,
                         slotId: slot.id,
@@ -90,8 +77,8 @@ const startAutoCancelJob = () => {
                         reason: 'Promoted from waitlist after auto-cancel',
                     });
 
-                    slot.isAvailable = false;
-                    await slot.save();
+                    // Slot isALREADY unavailable, so we just keep it that way. 
+                    // No need to set isAvailable=true then false.
 
                     nextInLine.status = 'promoted';
                     await nextInLine.save();
@@ -104,6 +91,11 @@ const startAutoCancelJob = () => {
                     );
 
                     console.log(`  ✅ Waitlist: ${nextInLine.user.name} promoted for slot ${slot.id}`);
+                } else {
+                    // 2. No waitlist? Free the slot.
+                    slot.isAvailable = true;
+                    await slot.save();
+                    console.log(`  ✨ Slot #${slot.id} is now available again.`);
                 }
 
                 console.log(`  ❌ Auto-cancelled appointment #${appointment.id}`);

@@ -77,6 +77,7 @@ const bookAppointment = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Slot not found.' });
         }
 
+        // Optimistic concurrency control (pre-check)
         if (!slot.isAvailable) {
             return res.status(409).json({
                 success: false,
@@ -85,6 +86,22 @@ const bookAppointment = async (req, res, next) => {
             });
         }
 
+        // ATOMIC UPDATE: Try to lock the slot
+        // Update isAvailable = false WHERE id = slotId AND isAvailable = true
+        const [updatedRows] = await AppointmentSlot.update(
+            { isAvailable: false },
+            { where: { id: slotId, isAvailable: true } }
+        );
+
+        if (updatedRows === 0) {
+            // Race condition hit: someone else booked it just now
+            return res.status(409).json({
+                success: false,
+                message: 'This slot was just booked by someone else. You can join the waitlist.',
+            });
+        }
+
+        // Proceed to create appointment
         const appointment = await Appointment.create({
             userId: req.user.id,
             slotId: slot.id,
@@ -96,8 +113,7 @@ const bookAppointment = async (req, res, next) => {
         // Log status history
         await logStatusChange(appointment.id, null, 'pending', 'user', 'Appointment booked');
 
-        slot.isAvailable = false;
-        await slot.save();
+        // No need to save slot again, already updated via atomic query
 
         const user = await User.findByPk(req.user.id);
         notifyBooking(user.email, slot.provider.user.name, slot.date, slot.startTime);
