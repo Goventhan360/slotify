@@ -1148,6 +1148,20 @@ function closeModal() {
     document.getElementById('modalOverlay').classList.add('hidden');
 }
 
+// ==================== UTILS ====================
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<i data-lucide="eye-off"></i>';
+    } else {
+        input.type = 'password';
+        btn.innerHTML = '<i data-lucide="eye"></i>';
+    }
+    renderIcons();
+}
+
 // ==================== INIT ====================
 (async function init() {
     renderIcons();

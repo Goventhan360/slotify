@@ -56,7 +56,11 @@
                             <label>Password</label>
                             <div class="input-wrapper">
                                 <i data-lucide="lock"></i>
-                                <input type="password" id="loginPassword" placeholder="••••••••" required>
+                                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                                <button type="button" class="password-toggle"
+                                    onclick="togglePassword('loginPassword', this)">
+                                    <i data-lucide="eye"></i>
+                                </button>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
@@ -86,6 +90,10 @@
                             <div class="input-wrapper">
                                 <i data-lucide="lock"></i>
                                 <input type="password" id="regPassword" placeholder="Min 6 chars, 1 number" required>
+                                <button type="button" class="password-toggle"
+                                    onclick="togglePassword('regPassword', this)">
+                                    <i data-lucide="eye"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="input-group">

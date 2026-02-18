@@ -364,6 +364,40 @@ a {
     background: rgba(255, 255, 255, 0.06);
 }
 
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.password-toggle:hover {
+    color: var(--primary-light);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.password-toggle svg {
+    width: 16px;
+    height: 16px;
+    position: static !important;
+    /* Override default input-wrapper svg styles */
+}
+
+/* Adjust input padding for password fields to include space for toggle */
+input[type="password"],
+input[type="text"]#loginPassword,
+input[type="text"]#regPassword {
+    padding-right: 40px !important;
+}
+
 .input-wrapper select {
     appearance: none;
     cursor: pointer;
