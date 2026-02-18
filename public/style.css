@@ -1955,6 +1955,9 @@ tr:hover td {
         z-index: 100;
         transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+        background: #0f172a;
+        /* Solid dark background */
+        border-right: 1px solid var(--border);
     }
 
     .sidebar.active {
