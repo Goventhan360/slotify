@@ -156,7 +156,23 @@ function closeUserMenu() {
     document.getElementById('userMenu').classList.add('hidden');
 }
 
+// ==================== MOBILE MENU ====================
+function toggleMobileMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+function closeMobileMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (sidebar) sidebar.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
+}
+
 document.addEventListener('click', (e) => {
+
     if (!e.target.closest('.nav-user') && !e.target.closest('.user-menu')) {
         closeUserMenu();
     }
@@ -331,6 +347,7 @@ function sidebarItem(icon, label, viewId) {
 
 // ==================== VIEW SWITCH ====================
 function showView(viewId, navEl) {
+    closeMobileMenu();
     // Hide all views
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));

@@ -1,0 +1,61 @@
+/* Mobile Menu Styles */
+.mobile-menu-btn {
+    display: none;
+    margin-right: 12px;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: flex;
+        /* Show on mobile */
+    }
+
+    .nav-brand span {
+        display: none;
+        /* Hide text on very small screens if needed, or keep it */
+    }
+
+    .sidebar {
+        display: flex !important;
+        /* Override display:none */
+        position: fixed;
+        top: var(--navbar-h);
+        left: -100%;
+        /* Hide off-screen */
+        height: calc(100vh - var(--navbar-h));
+        width: 260px;
+        z-index: 100;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .sidebar.active {
+        left: 0;
+        /* Slide in */
+    }
+
+    /* Ensure other elements don't overlap strangely */
+    .nav-search {
+        display: none;
+        /* Keep search hidden on mobile for now as per original CSS */
+    }
+}
