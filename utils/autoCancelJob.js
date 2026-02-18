@@ -37,6 +37,7 @@ const startAutoCancelJob = () => {
 
             for (const appointment of expiredAppointments) {
                 const oldStatus = appointment.status;
+                const slot = appointment.slot;
 
                 // Cancel the appointment
                 appointment.status = 'cancelled';
@@ -52,6 +53,17 @@ const startAutoCancelJob = () => {
                     reason: `Auto-cancelled: not confirmed within ${cancelHours} hours`,
                 });
 
+                // Notify user about cancellation
+                const user = await User.findByPk(appointment.userId);
+                if (user && slot && slot.provider && slot.provider.user) {
+                    notifyAutoCancel(
+                        user.email,
+                        slot.provider.user.name,
+                        slot.date,
+                        slot.startTime
+                    );
+                }
+
                 // Check waitlist FIRST to prevent race condition (sniping)
                 const nextInLine = await Waitlist.findOne({
                     where: { slotId: slot.id, status: 'waiting' },
@@ -60,7 +72,7 @@ const startAutoCancelJob = () => {
                 });
 
                 if (nextInLine) {
-                    // 1. Promote directly (Slot remains unavailable, just changes owner implicitly)
+                    // Promote directly — slot stays unavailable, just changes owner
                     const newAppointment = await Appointment.create({
                         userId: nextInLine.userId,
                         slotId: slot.id,
@@ -77,22 +89,21 @@ const startAutoCancelJob = () => {
                         reason: 'Promoted from waitlist after auto-cancel',
                     });
 
-                    // Slot isALREADY unavailable, so we just keep it that way. 
-                    // No need to set isAvailable=true then false.
-
                     nextInLine.status = 'promoted';
                     await nextInLine.save();
 
-                    notifyWaitlistPromotion(
-                        nextInLine.user.email,
-                        slot.provider.user.name,
-                        slot.date,
-                        slot.startTime
-                    );
+                    if (nextInLine.user && slot.provider && slot.provider.user) {
+                        notifyWaitlistPromotion(
+                            nextInLine.user.email,
+                            slot.provider.user.name,
+                            slot.date,
+                            slot.startTime
+                        );
+                    }
 
                     console.log(`  ✅ Waitlist: ${nextInLine.user.name} promoted for slot ${slot.id}`);
                 } else {
-                    // 2. No waitlist? Free the slot.
+                    // No waitlist — free the slot
                     slot.isAvailable = true;
                     await slot.save();
                     console.log(`  ✨ Slot #${slot.id} is now available again.`);

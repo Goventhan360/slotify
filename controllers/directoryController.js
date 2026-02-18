@@ -43,4 +43,24 @@ const getPatients = async (req, res, next) => {
     }
 };
 
-module.exports = { getProviders, getPatients };
+// GET /api/directory/public — public list (name/spec only)
+const getPublicProviders = async (req, res, next) => {
+    try {
+        const providers = await Provider.findAll({
+            include: [{ model: User, as: 'user', attributes: ['name'] }],
+            attributes: ['specialization'],
+        });
+
+        res.status(200).json({
+            success: true,
+            data: providers.map(p => ({
+                name: p.user?.name || '—',
+                specialization: p.specialization,
+            })),
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = { getProviders, getPatients, getPublicProviders };

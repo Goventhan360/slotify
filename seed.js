@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs');
 const { User, Provider } = require('./models');
-const sequelize = require('./config/database');
 require('dotenv').config();
 
 const users = [
@@ -28,13 +27,12 @@ const users = [
 
 async function seed() {
     try {
-        await sequelize.sync(); // Ensure tables exist
         console.log('🌱 Seeding database...');
 
         for (const u of users) {
             const existing = await User.findOne({ where: { email: u.email } });
             if (existing) {
-                console.log(`⚠️  User ${u.email} already exists.`);
+                console.log(`⚠️  User ${u.email} already exists, skipping.`);
                 continue;
             }
 
@@ -62,15 +60,13 @@ async function seed() {
         console.log('✨ Seeding complete!');
     } catch (error) {
         console.error('❌ Seeding failed:', error);
-    } finally {
-        // await sequelize.close(); // Keep connection open if imported elsewhere, but for script we can close
-        process.exit();
     }
 }
 
-// Run if called directly
+// Run if called directly (standalone script)
 if (require.main === module) {
-    seed();
+    const sequelize = require('./config/database');
+    sequelize.sync().then(() => seed()).then(() => process.exit(0));
 }
 
 module.exports = seed;

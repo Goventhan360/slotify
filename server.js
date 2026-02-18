@@ -93,8 +93,6 @@ const PORT = process.env.PORT || 5000;
 
 const seed = require('./seed');
 
-// ...
-
 sequelize
     .sync({ force: false })
     .then(async () => {

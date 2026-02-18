@@ -1180,4 +1180,32 @@ function togglePassword(inputId, btn) {
             localStorage.removeItem('user');
         }
     }
+    // Load public doctors list
+    loadPublicDoctors();
 })();
+
+async function loadPublicDoctors() {
+    const container = document.getElementById('publicDoctorsList');
+    if (!container) return;
+
+    try {
+        const response = await fetch('/api/directory/public'); // No auth needed
+        const data = await response.json();
+
+        if (data.data && data.data.length > 0) {
+            container.innerHTML = data.data.map(d => `
+                <div class="public-doc-card">
+                    <div class="doc-avatar-sm">${d.name.charAt(0)}</div>
+                    <div class="doc-info">
+                        <h4>${d.name}</h4>
+                        <p>${d.specialization}</p>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<p style="color:var(--text-muted)">No doctors listed yet.</p>';
+        }
+    } catch (e) {
+        console.error('Failed to load public doctors:', e);
+    }
+}

@@ -181,7 +181,70 @@ a {
     justify-content: center;
     padding: 64px;
     position: relative;
-    overflow: hidden;
+    padding: 64px;
+    position: relative;
+    overflow-y: auto;
+    /* Allow scrolling for doctors list */
+}
+
+/* Public Directory inside Auth Screen */
+.public-directory {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.public-directory h3 {
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.public-doctors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.public-doc-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: var(--transition);
+}
+
+.public-doc-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+.doc-avatar-sm {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--purple));
+    color: white;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.doc-info h4 {
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 2px;
+}
+
+.doc-info p {
+    font-size: 12px;
+    color: var(--text-secondary);
 }
 
 .auth-left::before {
@@ -1952,7 +2015,8 @@ tr:hover td {
         left: -100%;
         height: calc(100vh - var(--navbar-h));
         width: 260px;
-        z-index: 100;
+        z-index: 1001;
+        /* Ensure above overlay */
         transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
         background: #0f172a;
@@ -1971,8 +2035,18 @@ tr:hover td {
 
     .sidebar-overlay {
         display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        /* Below sidebar, above content */
         opacity: 0;
         pointer-events: none;
+        transition: opacity 0.3s ease;
     }
 
     .sidebar-overlay.active {

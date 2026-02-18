@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { getProviders, getPatients } = require('../controllers/directoryController');
+const { getProviders, getPatients, getPublicProviders } = require('../controllers/directoryController');
 const authenticate = require('../middleware/auth');
 const roleCheck = require('../middleware/roleCheck');
+
+// GET /api/directory/public — public list of providers (no auth)
+router.get('/public', getPublicProviders);
 
 // GET /api/directory/providers — any authenticated user can see providers
 router.get('/providers', authenticate, getProviders);
