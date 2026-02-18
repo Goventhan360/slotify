@@ -96,6 +96,18 @@ const login = async (req, res, next) => {
             });
         }
 
+        // Self-healing: Ensure provider profile exists if role is provider
+        if (user.role === 'provider') {
+            const providerProfile = await Provider.findOne({ where: { userId: user.id } });
+            if (!providerProfile) {
+                await Provider.create({
+                    userId: user.id,
+                    specialization: 'General', // Default
+                    phone: null,
+                });
+            }
+        }
+
         // Generate token
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role },
