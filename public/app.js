@@ -7,6 +7,45 @@ const API = '/api';
 let token = localStorage.getItem('token');
 let currentUser = JSON.parse(localStorage.getItem('user') || 'null');
 
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', () => {
+    checkGoogleCallback();
+    renderIcons();
+});
+
+async function checkGoogleCallback() {
+    const params = new URLSearchParams(window.location.search);
+    const urlToken = params.get('token');
+
+    if (urlToken) {
+        // Google Login Success
+        try {
+            token = urlToken;
+            localStorage.setItem('token', token);
+
+            // Fetch user details to get role/name
+            const data = await api('/me');
+            if (data.success) {
+                currentUser = data.data;
+                localStorage.setItem('user', JSON.stringify(currentUser));
+
+                // Clean URL
+                window.history.replaceState({}, document.title, '/');
+
+                toast('Logged in with Google successfully!', 'success');
+                enterApp();
+            }
+        } catch (err) {
+            console.error('Google login error:', err);
+            toast('Failed to verify Google login', 'error');
+            logout(); // Clear invalid token
+        }
+    } else if (token && currentUser) {
+        // Persist login
+        enterApp();
+    }
+}
+
 // ==================== LUCIDE INIT ====================
 function renderIcons() {
     if (typeof lucide !== 'undefined') lucide.createIcons();
