@@ -120,11 +120,19 @@ const bookAppointment = async (req, res, next) => {
         notifyBooking(user.email, slot.provider.user.name, slot.date, slot.startTime);
 
         // Send Email Notification
-        await sendEmail({
-            email: user.email,
-            subject: 'Slot Booked Successfully',
-            message: `Hi ${user.name},\n\nYour slot is booked successfully with Dr. ${slot.provider.user.name} for ${slot.date} at ${slot.startTime}.\n\nThank you!`
-        });
+        await sendEmail(
+            user.email,
+            "Appointment Booked ✔",
+            `
+            <h3>Hello ${user.name},</h3>
+            <p>Your appointment has been <b>successfully booked</b>.</p>
+            <p><b>Date:</b> ${slot.date}</p>
+            <p><b>Time:</b> ${slot.startTime}</p>
+            <p><b>Doctor:</b> Dr. ${slot.provider.user.name}</p>
+            <br>
+            <p>Thank you for using Slotify! 🚀</p>
+            `
+        );
 
         res.status(201).json({
             success: true,
@@ -274,11 +282,18 @@ const rescheduleAppointment = async (req, res, next) => {
         notifyReschedule(user.email, newSlot.provider.user.name, oldSlot.date, oldSlot.startTime, newSlot.date, newSlot.startTime);
 
         // Send Email Notification
-        await sendEmail({
-            email: user.email,
-            subject: 'Appointment Rescheduled - Slotify',
-            message: `Hello ${user.name},\n\nYour appointment with Dr. ${newSlot.provider.user.name} has been rescheduled.\n\nOld Slot: ${oldSlot.date} at ${oldSlot.startTime}\nNew Slot: ${newSlot.date} at ${newSlot.startTime}\n\nThank you,\nSlotify Team`
-        });
+        await sendEmail(
+            user.email,
+            "Appointment Rescheduled 🔁",
+            `
+            <h3>Hello ${user.name},</h3>
+            <p>Your appointment has been <b>rescheduled</b>.</p>
+            <p><b>New Slot:</b> ${newSlot.date} at ${newSlot.startTime}</p>
+            <p><b>Doctor:</b> Dr. ${newSlot.provider.user.name}</p>
+            <br>
+            <p>Thank you for using Slotify! 🚀</p>
+            `
+        );
 
         // Promote from waitlist for old slot
         const promotion = await promoteFromWaitlist(oldSlot.id);
@@ -333,11 +348,16 @@ const cancelAppointment = async (req, res, next) => {
         notifyCancellation(user.email, slot.provider.user.name, slot.date, slot.startTime);
 
         // Send Email Notification
-        await sendEmail({
-            email: user.email,
-            subject: 'Appointment Cancelled',
-            message: `Hi ${user.name},\n\nYour appointment with Dr. ${slot.provider.user.name} on ${slot.date} at ${slot.startTime} has been cancelled.\n\nThank you.`
-        });
+        await sendEmail(
+            user.email,
+            "Appointment Cancelled ❌",
+            `
+            <h3>Hello ${user.name},</h3>
+            <p>Your appointment with Dr. ${slot.provider.user.name} on ${slot.date} at ${slot.startTime} has been <b>cancelled</b>.</p>
+            <br>
+            <p>Thank you for using Slotify! 🚀</p>
+            `
+        );
 
         // 🔥 Promote from waitlist
         const promotion = await promoteFromWaitlist(slot.id);
