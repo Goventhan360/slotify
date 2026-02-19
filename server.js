@@ -29,6 +29,7 @@ app.set('trust proxy', 1); // Helper for Render/Heroku to trust HTTPS proxy
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Passport Config
 require('./config/passport');
