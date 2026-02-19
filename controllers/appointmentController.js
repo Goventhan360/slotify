@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const { Appointment, AppointmentSlot, Provider, User, StatusHistory, Waitlist } = require('../models');
 const { notifyBooking, notifyReschedule, notifyCancellation, notifyConfirmation, notifyWaitlistPromotion } = require('../utils/notification');
+const sendEmail = require('../utils/sendEmail');
 
 // Helper: log status change
 const logStatusChange = async (appointmentId, fromStatus, toStatus, changedBy = 'user', reason = null) => {
@@ -117,6 +118,13 @@ const bookAppointment = async (req, res, next) => {
 
         const user = await User.findByPk(req.user.id);
         notifyBooking(user.email, slot.provider.user.name, slot.date, slot.startTime);
+
+        // Send Email Notification
+        await sendEmail({
+            email: user.email,
+            subject: 'Appointment Confirmation - Slotify',
+            message: `Hello ${user.name},\n\nYour appointment with Dr. ${slot.provider.user.name} has been booked for ${slot.date} at ${slot.startTime}.\n\nStatus: Pending confirmation.\n\nThank you,\nSlotify Team`
+        });
 
         res.status(201).json({
             success: true,
@@ -265,6 +273,13 @@ const rescheduleAppointment = async (req, res, next) => {
         const user = await User.findByPk(req.user.id);
         notifyReschedule(user.email, newSlot.provider.user.name, oldSlot.date, oldSlot.startTime, newSlot.date, newSlot.startTime);
 
+        // Send Email Notification
+        await sendEmail({
+            email: user.email,
+            subject: 'Appointment Rescheduled - Slotify',
+            message: `Hello ${user.name},\n\nYour appointment with Dr. ${newSlot.provider.user.name} has been rescheduled.\n\nOld Slot: ${oldSlot.date} at ${oldSlot.startTime}\nNew Slot: ${newSlot.date} at ${newSlot.startTime}\n\nThank you,\nSlotify Team`
+        });
+
         // Promote from waitlist for old slot
         const promotion = await promoteFromWaitlist(oldSlot.id);
 
@@ -316,6 +331,13 @@ const cancelAppointment = async (req, res, next) => {
 
         const user = await User.findByPk(req.user.id);
         notifyCancellation(user.email, slot.provider.user.name, slot.date, slot.startTime);
+
+        // Send Email Notification
+        await sendEmail({
+            email: user.email,
+            subject: 'Appointment Cancelled - Slotify',
+            message: `Hello ${user.name},\n\nYour appointment with Dr. ${slot.provider.user.name} on ${slot.date} at ${slot.startTime} has been cancelled.\n\nThank you,\nSlotify Team`
+        });
 
         // 🔥 Promote from waitlist
         const promotion = await promoteFromWaitlist(slot.id);
