@@ -122,8 +122,8 @@ const bookAppointment = async (req, res, next) => {
         // Send Email Notification
         await sendEmail({
             email: user.email,
-            subject: 'Appointment Confirmation - Slotify',
-            message: `Hello ${user.name},\n\nYour appointment with Dr. ${slot.provider.user.name} has been booked for ${slot.date} at ${slot.startTime}.\n\nStatus: Pending confirmation.\n\nThank you,\nSlotify Team`
+            subject: 'Slot Booked Successfully',
+            message: `Hi ${user.name},\n\nYour slot is booked successfully with Dr. ${slot.provider.user.name} for ${slot.date} at ${slot.startTime}.\n\nThank you!`
         });
 
         res.status(201).json({
@@ -335,8 +335,8 @@ const cancelAppointment = async (req, res, next) => {
         // Send Email Notification
         await sendEmail({
             email: user.email,
-            subject: 'Appointment Cancelled - Slotify',
-            message: `Hello ${user.name},\n\nYour appointment with Dr. ${slot.provider.user.name} on ${slot.date} at ${slot.startTime} has been cancelled.\n\nThank you,\nSlotify Team`
+            subject: 'Appointment Cancelled',
+            message: `Hi ${user.name},\n\nYour appointment with Dr. ${slot.provider.user.name} on ${slot.date} at ${slot.startTime} has been cancelled.\n\nThank you.`
         });
 
         // 🔥 Promote from waitlist
