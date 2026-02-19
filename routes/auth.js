@@ -10,6 +10,24 @@ const { User, Provider } = require('../models');
 // Google OAuth Routes
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
+// DEBUG: Test Email Route
+const sendEmail = require('../utils/sendEmail');
+router.get('/test-email', async (req, res) => {
+    const email = req.query.email;
+    if (!email) return res.send('Usage: /api/test-email?email=YOUR_EMAIL');
+
+    try {
+        const result = await sendEmail(email, "Test Email from Slotify", "<p>If you see this, your email configuration is PERFECT! 🚀</p>");
+        if (result) {
+            res.send(`<h1>✅ Email Sent!</h1><p>Check your inbox (and spam) for ${email}</p>`);
+        } else {
+            res.send(`<h1>❌ Send Failed</h1><p>Check Render Logs. Mode: ${process.env.EMAIL_USER ? 'Real' : 'Mock (No config detected)'}</p>`);
+        }
+    } catch (err) {
+        res.send(`<h1>❌ Error</h1><pre>${err.message}</pre>`);
+    }
+});
+
 router.get(
     '/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/unauthorized', session: false }),
