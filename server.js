@@ -1,4 +1,6 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 
 const express = require('express');
 const cors = require('cors');
@@ -96,6 +98,13 @@ app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
+
+console.log('--- DEBUG ENV START ---');
+console.log('PORT:', process.env.PORT);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('Keys present:', Object.keys(process.env).join(', '));
+console.log('--- DEBUG ENV END ---');
+
 
 const seed = require('./seed');
 
