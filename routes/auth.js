@@ -8,10 +8,10 @@ const authenticate = require('../middleware/auth');
 const { User, Provider } = require('../models');
 
 // Google OAuth Routes
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get(
-    '/google/callback',
+    '/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login', session: false }),
     (req, res) => {
         // Successful authentication, redirect to frontend with token
