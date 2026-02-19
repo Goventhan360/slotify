@@ -85,7 +85,7 @@ console.log('--- DEBUG ENV END ---');
 const seed = require('./seed');
 
 sequelize
-    .sync({ force: false }) // Back to normal
+    .sync({ alter: true }) // Auto-update schema (add missing columns)
     .then(async () => {
         console.log('✅ Database synced successfully.');
 
