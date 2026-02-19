@@ -1,9 +1,31 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
 const { register, login } = require('../controllers/authController');
 const { registerValidation, loginValidation } = require('../validators/authValidator');
 const authenticate = require('../middleware/auth');
-const { User } = require('../models');
+const { User, Provider } = require('../models');
+
+// Google OAuth Routes
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get(
+    '/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login', session: false }),
+    (req, res) => {
+        // Successful authentication, redirect to frontend with token
+        const token = jwt.sign(
+            { id: req.user.id, email: req.user.email, role: req.user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRES_IN }
+        );
+
+        // Redirect to frontend (relative path works for both local and prod if served from same origin)
+        // If frontend is separate, this should be an env var like FRONTEND_URL
+        res.redirect(`/?token=${token}`);
+    }
+);
 
 // POST /api/register
 router.post('/register', registerValidation, register);
@@ -12,7 +34,8 @@ router.post('/register', registerValidation, register);
 router.post('/login', loginValidation, login);
 
 // GET /api/me — verify token and return current user info
-const { Provider } = require('../models');
+// Provider is already imported at the top
+
 
 router.get('/me', authenticate, async (req, res, next) => {
     try {

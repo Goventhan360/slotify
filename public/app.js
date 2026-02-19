@@ -610,7 +610,10 @@ function apptCard(a) {
         <div class="appt-card">
             <div class="appt-icon"><i data-lucide="stethoscope"></i></div>
             <div class="appt-info">
-                <div class="appt-title">${a.provider?.user?.name || 'Provider'}</div>
+                <div class="appt-title">Dr. ${a.provider?.user?.name || 'Unknown'}</div>
+                <div class="appt-meta" style="margin-top:4px; margin-bottom:8px;">
+                    <span class="appt-detail" style="color:var(--text-secondary);"><i data-lucide="user"></i> Patient: ${a.user?.name || 'Unknown'}</span>
+                </div>
                 <div class="appt-meta">
                     <span class="appt-detail"><i data-lucide="calendar"></i> ${a.slot?.date || '—'}</span>
                     <span class="appt-detail"><i data-lucide="clock"></i> ${a.slot?.startTime || '—'} – ${a.slot?.endTime || '—'}</span>
@@ -1180,32 +1183,4 @@ function togglePassword(inputId, btn) {
             localStorage.removeItem('user');
         }
     }
-    // Load public doctors list
-    loadPublicDoctors();
 })();
-
-async function loadPublicDoctors() {
-    const container = document.getElementById('publicDoctorsList');
-    if (!container) return;
-
-    try {
-        const response = await fetch('/api/directory/public'); // No auth needed
-        const data = await response.json();
-
-        if (data.data && data.data.length > 0) {
-            container.innerHTML = data.data.map(d => `
-                <div class="public-doc-card">
-                    <div class="doc-avatar-sm">${d.name.charAt(0)}</div>
-                    <div class="doc-info">
-                        <h4>${d.name}</h4>
-                        <p>${d.specialization}</p>
-                    </div>
-                </div>
-            `).join('');
-        } else {
-            container.innerHTML = '<p style="color:var(--text-muted)">No doctors listed yet.</p>';
-        }
-    } catch (e) {
-        console.error('Failed to load public doctors:', e);
-    }
-}

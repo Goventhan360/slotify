@@ -23,9 +23,15 @@ require('./models');
 const app = express();
 
 // Middleware
+app.set('trust proxy', 1); // Helper for Render/Heroku to trust HTTPS proxy
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Passport Config
+require('./config/passport');
+const passport = require('passport');
+app.use(passport.initialize());
 
 // Serve frontend
 app.use(express.static(path.join(__dirname, 'public')));
@@ -94,7 +100,7 @@ const PORT = process.env.PORT || 5000;
 const seed = require('./seed');
 
 sequelize
-    .sync({ force: false })
+    .sync({ force: false }) // Back to normal
     .then(async () => {
         console.log('✅ Database synced successfully.');
 
