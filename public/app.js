@@ -615,6 +615,19 @@ async function bookSlot(slotId) {
     }
 }
 
+async function joinWaitlist(slotId) {
+    try {
+        const data = await api('/waitlist', 'POST', { slotId });
+        toast(data.message, 'success');
+        // Refresh waitlist view if active, or just load slots
+        if (document.getElementById('waitlistView').classList.contains('active')) {
+            loadMyWaitlist();
+        }
+    } catch (err) {
+        toast(err.message, 'error');
+    }
+}
+
 // ==================== MY APPOINTMENTS ====================
 async function loadMyAppointments() {
     const container = document.getElementById('appointmentsList');

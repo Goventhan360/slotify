@@ -11,35 +11,26 @@ passport.use(
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                // Check if user already exists
-                let user = await User.findOne({ where: { googleId: profile.id } });
+                const email = profile.emails[0].value;
 
-                if (user) {
-                    return done(null, user);
+                // 1. Check if user exists with this email
+                let user = await User.findOne({ where: { email } });
+
+                if (!user) {
+                    // USER NOT REGISTERED -> BLOCK LOGIN
+                    return done(null, false, {
+                        message: 'Email not registered. Access denied.',
+                    });
                 }
 
-                // Check if user exists with email (link account)
-                user = await User.findOne({ where: { email: profile.emails[0].value } });
-
-                if (user) {
+                // 2. User exists -> Ensure Google ID is linked
+                if (!user.googleId) {
                     user.googleId = profile.id;
-                    user.profilePicture = profile.photos[0].value;
+                    if (!user.profilePicture) {
+                        user.profilePicture = profile.photos[0].value;
+                    }
                     await user.save();
-                    return done(null, user);
                 }
-
-                // Create new user
-                user = await User.create({
-                    googleId: profile.id,
-                    name: profile.displayName,
-                    email: profile.emails[0].value,
-                    profilePicture: profile.photos[0].value,
-                    role: 'user', // Default role
-                });
-
-                // Auto-create provider profile if needed (though new users default to 'user')
-                // If we want to allow Google sign-up for providers, we'd need a way to pass that info.
-                // For now, default to 'user' is safe.
 
                 return done(null, user);
             } catch (err) {

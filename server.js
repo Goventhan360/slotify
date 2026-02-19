@@ -35,10 +35,14 @@ require('./config/passport');
 const passport = require('passport');
 app.use(passport.initialize());
 
-// Serve frontend
-app.use(express.static(path.join(__dirname, 'public')));
-
 // Routes
+app.get('/unauthorized', (req, res) => {
+    res.status(403).json({
+        success: false,
+        message: 'Access denied: Email not registered. Please sign up first.',
+    });
+});
+
 app.use('/api', authRoutes);
 app.use('/api/slots', slotRoutes);
 app.use('/api/appointments', appointmentRoutes);
