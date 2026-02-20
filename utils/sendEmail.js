@@ -2,9 +2,11 @@ const nodemailer = require("nodemailer");
 
 const sendEmail = async (to, subject, html) => {
     try {
-        // REAL EMAIL TRANSPORTER (Gmail)
+        // REAL EMAIL TRANSPORTER (Gmail SMTP)
         const transporter = nodemailer.createTransport({
-            service: "gmail",
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true, // true for 465, false for other ports
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
@@ -23,17 +25,18 @@ const sendEmail = async (to, subject, html) => {
         await transporter.sendMail(mailOptions);
 
         console.log(`📧 Email sent to ${to}`);
-        return true;
+        return { success: true };
 
     } catch (err) {
         // MOCK MODE (Backup)
+        console.error("❌ Email Send Failed:", err.message); // Log the actual error
         console.log("\n--- MOCK EMAIL TRIGGERED ---");
         console.log(`To: ${to}`);
         console.log(`Subject: ${subject}`);
         console.log(`Message: ${html}`);
         console.log("--- END MOCK EMAIL ---\n");
 
-        return false;
+        return { success: false, error: err.message };
     }
 };
 

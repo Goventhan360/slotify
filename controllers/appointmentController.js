@@ -122,15 +122,29 @@ const bookAppointment = async (req, res, next) => {
         // Send Email Notification
         await sendEmail(
             user.email,
-            "Appointment Booked ✔",
+            "✅ Appointment Confirmed - Slotify",
             `
-            <h3>Hello ${user.name},</h3>
-            <p>Your appointment has been <b>successfully booked</b>.</p>
-            <p><b>Date:</b> ${slot.date}</p>
-            <p><b>Time:</b> ${slot.startTime}</p>
-            <p><b>Doctor:</b> Dr. ${slot.provider.user.name}</p>
-            <br>
-            <p>Thank you for using Slotify! 🚀</p>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                <div style="background-color: #2563eb; padding: 20px; text-align: center; color: white;">
+                    <h2 style="margin: 0;">Appointment Confirmed</h2>
+                </div>
+                <div style="padding: 20px;">
+                    <p>Hello <b>${user.name}</b>,</p>
+                    <p>Your appointment has been successfully booked. We look forward to seeing you!</p>
+                    
+                    <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                        <p style="margin: 5px 0;"><b>📅 Date:</b> ${slot.date}</p>
+                        <p style="margin: 5px 0;"><b>⏰ Time:</b> ${slot.startTime}</p>
+                        <p style="margin: 5px 0;"><b>👨‍⚕️ Provider:</b> Dr. ${slot.provider.user.name}</p>
+                        <p style="margin: 5px 0;"><b>🏥 Status:</b> <span style="color: #2563eb;">Pending Confirmation</span></p>
+                    </div>
+
+                    <p>If you need to reschedule or cancel, please log in to your dashboard.</p>
+                </div>
+                <div style="background-color: #f1f5f9; padding: 15px; text-align: center; font-size: 12px; color: #64748b;">
+                    <p>© 2026 Slotify Health. All rights reserved.</p>
+                </div>
+            </div>
             `
         );
 
@@ -284,14 +298,28 @@ const rescheduleAppointment = async (req, res, next) => {
         // Send Email Notification
         await sendEmail(
             user.email,
-            "Appointment Rescheduled 🔁",
+            "🔁 Appointment Rescheduled - Slotify",
             `
-            <h3>Hello ${user.name},</h3>
-            <p>Your appointment has been <b>rescheduled</b>.</p>
-            <p><b>New Slot:</b> ${newSlot.date} at ${newSlot.startTime}</p>
-            <p><b>Doctor:</b> Dr. ${newSlot.provider.user.name}</p>
-            <br>
-            <p>Thank you for using Slotify! 🚀</p>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                <div style="background-color: #f59e0b; padding: 20px; text-align: center; color: white;">
+                    <h2 style="margin: 0;">Appointment Rescheduled</h2>
+                </div>
+                <div style="padding: 20px;">
+                    <p>Hello <b>${user.name}</b>,</p>
+                    <p>Your appointment has been updated to a new time slot as requested.</p>
+                    
+                    <div style="background-color: #fffbeb; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                        <p style="margin: 5px 0;"><b>📅 New Date:</b> ${newSlot.date}</p>
+                        <p style="margin: 5px 0;"><b>⏰ New Time:</b> ${newSlot.startTime}</p>
+                        <p style="margin: 5px 0;"><b>👨‍⚕️ Provider:</b> Dr. ${newSlot.provider.user.name}</p>
+                    </div>
+
+                    <p>The previous slot has been released.</p>
+                </div>
+                <div style="background-color: #f1f5f9; padding: 15px; text-align: center; font-size: 12px; color: #64748b;">
+                    <p>© 2026 Slotify Health. All rights reserved.</p>
+                </div>
+            </div>
             `
         );
 
@@ -350,12 +378,28 @@ const cancelAppointment = async (req, res, next) => {
         // Send Email Notification
         await sendEmail(
             user.email,
-            "Appointment Cancelled ❌",
+            "❌ Appointment Cancelled - Slotify",
             `
-            <h3>Hello ${user.name},</h3>
-            <p>Your appointment with Dr. ${slot.provider.user.name} on ${slot.date} at ${slot.startTime} has been <b>cancelled</b>.</p>
-            <br>
-            <p>Thank you for using Slotify! 🚀</p>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                <div style="background-color: #ef4444; padding: 20px; text-align: center; color: white;">
+                    <h2 style="margin: 0;">Appointment Cancelled</h2>
+                </div>
+                <div style="padding: 20px;">
+                    <p>Hello <b>${user.name}</b>,</p>
+                    <p>Your appointment has been cancelled as requested.</p>
+                    
+                    <div style="background-color: #fef2f2; padding: 15px; border-radius: 6px; margin: 20px 0; color: #991b1b;">
+                        <p style="margin: 5px 0;"><b>🚫 Cancelled Slot:</b></p>
+                        <p style="margin: 5px 0;">${slot.date} at ${slot.startTime}</p>
+                        <p style="margin: 5px 0;">Dr. ${slot.provider.user.name}</p>
+                    </div>
+
+                    <p>You can book a new appointment at any time via your dashboard.</p>
+                </div>
+                <div style="background-color: #f1f5f9; padding: 15px; text-align: center; font-size: 12px; color: #64748b;">
+                    <p>© 2026 Slotify Health. All rights reserved.</p>
+                </div>
+            </div>
             `
         );
 
