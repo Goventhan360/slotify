@@ -19,7 +19,11 @@ router.get('/test-email', async (req, res) => {
     try {
         const result = await sendEmail(email, "Test Email from Slotify", "<p>If you see this, your email configuration is PERFECT! 🚀</p>");
         if (result.success) {
-            res.send(`<h1>✅ Email Sent!</h1><p>Check your inbox (and spam) for ${email}</p>`);
+            res.send(`
+                <h1>✅ Email Sent! (via Ethereal)</h1>
+                <p>Since Gmail blocked the connection, we used a Test Service.</p>
+                <p>👉 <b><a href="${result.previewUrl}" target="_blank">Click Here to View the Email</a></b></p>
+            `);
         } else {
             res.send(`<h1>❌ Send Failed</h1><p><b>Error Details:</b> ${result.error}</p><hr><p>Mode: ${process.env.EMAIL_USER ? 'Real' : 'Mock (No config detected)'}</p>`);
         }

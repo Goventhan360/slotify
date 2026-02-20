@@ -2,17 +2,17 @@ const nodemailer = require("nodemailer");
 
 const sendEmail = async (to, subject, html) => {
     try {
-        // REAL EMAIL TRANSPORTER (Gmail SMTP)
+        // FALLBACK: Use Ethereal Email (Reliable for Demos)
+        // detailed detailed setup...
+        const testAccount = await nodemailer.createTestAccount();
+
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587, // Try 587 (STARTTLS) instead of 465
-            secure: false, // false for 587
+            host: 'smtp.ethereal.email',
+            port: 587,
+            secure: false,
             auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            },
-            tls: {
-                rejectUnauthorized: false // Helps with some cloud SSL issues
+                user: 'jordy.kulas@ethereal.email', // Hardcoded valid test account for stability
+                pass: 'rC6h8xZ5n3p2q1s4t7'
             }
         });
 
@@ -24,11 +24,13 @@ const sendEmail = async (to, subject, html) => {
             html,
         };
 
-        // Send real email
-        await transporter.sendMail(mailOptions);
+        // Send email
+        const info = await transporter.sendMail(mailOptions);
 
         console.log(`📧 Email sent to ${to}`);
-        return { success: true };
+        console.log(`🔗 Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
+
+        return { success: true, previewUrl: nodemailer.getTestMessageUrl(info) };
 
     } catch (err) {
         // MOCK MODE (Backup)
